@@ -586,6 +586,14 @@ V1LayerParameter_LayerType UpgradeV0LayerType(const string& type) {
     return V1LayerParameter_LayerType_SPLIT;
   } else if (type == "tanh") {
     return V1LayerParameter_LayerType_TANH;
+  } else if (type == "normalize") {
+    return V1LayerParameter_LayerType_NORMALIZE;
+  } else if (type == "sqrt") {
+    return V1LayerParameter_LayerType_SQRT;
+  } else if (type == "bilinear") {
+    return V1LayerParameter_LayerType_BILINEAR;
+  } else if (type == "silence") {
+    return V1LayerParameter_LayerType_SILENCE;
   } else if (type == "window_data") {
     return V1LayerParameter_LayerType_WINDOW_DATA;
   } else {
@@ -944,6 +952,12 @@ const char* UpgradeV1LayerType(const V1LayerParameter_LayerType type) {
     return "WindowData";
   case V1LayerParameter_LayerType_THRESHOLD:
     return "Threshold";
+  case V1LayerParameter_LayerType_NORMALIZE:
+    return "Normalize";
+  case V1LayerParameter_LayerType_SQRT:
+    return "Sqrt";
+  case V1LayerParameter_LayerType_BILINEAR:
+    return "Bilinear";
   default:
     LOG(FATAL) << "Unknown V1LayerParameter layer type: " << type;
     return "";
