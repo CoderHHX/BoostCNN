@@ -143,6 +143,60 @@ class AdamSolver : public SGDSolver<Dtype> {
   DISABLE_COPY_AND_ASSIGN(AdamSolver);
 };
 
+template <typename Dtype>
+class BoostSolver : public SGDSolver<Dtype> {
+ public:
+  explicit BoostSolver(const SolverParameter& param)
+      : SGDSolver<Dtype>(param) { }
+  explicit BoostSolver(const string& param_file)
+      : SGDSolver<Dtype>(param_file) { }
+  virtual inline const char* type() const { return "Boost"; }
+
+  virtual void Solve(const char* resume_file = NULL);
+
+ protected:
+  int FindBlobIndex(const shared_ptr<Net<Dtype> >& net, const std::string& blob_name);
+  void CalculateActivations(std::map<std::string, BoostWeight>* activations,
+                            std::map<std::string, int>* label_map,
+                            bool if_train,
+                            bool if_test,
+                            const std::string& blob_name,
+                            int limit = -1);
+
+  double CalculateAlphaFast(const std::map<std::string, BoostWeight>& boostw,
+                            const std::map<std::string, BoostWeight>& activations,
+                            const std::map<std::string, int>& label_map,
+                            bool verbose);
+  
+
+  double CalculateAccuracy(std::map<std::string, BoostWeight>& activations,
+                           std::map<std::string, int>& label_map);
+
+  double CalculateAlphaGradient(const std::map<std::string, BoostWeight>& boostw,
+                                const std::map<std::string, BoostWeight>& activations,
+                                const std::map<std::string, int>& label_map,
+                                double alpha);
+
+  double CalculateBoostingLoss(const std::map<std::string, BoostWeight>& boostw,
+                               const std::map<std::string, BoostWeight>& activations,
+                               const std::map<std::string, int>& label_map,
+                               double alpha,
+                               bool if_train,
+                               bool if_test);
+
+  void CalculateBoostWeights(const std::map<std::string, BoostWeight>& boostw,
+                             const std::map<std::string, BoostWeight>& activations,  
+                             const std::map<std::string, int> label_map,
+                             double alpha,
+                             std::map<std::string, BoostWeight>* output_boostw);
+
+  void WriteBoostWeightFile(const std::string& output_boostweights_filename,
+                            const std::map<std::string, BoostWeight>& output_boostw);
+
+
+  DISABLE_COPY_AND_ASSIGN(BoostSolver);
+};
+
 }  // namespace caffe
 
 #endif  // CAFFE_SGD_SOLVERS_HPP_
